@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #c5a880;
+  --color-gold-dark: #a4865d;
+  --color-gold-light: #f5eedc;
+  --color-soft-blue: #f0f7ff;
+  --color-soft-blue-dark: #1e3a8a;
+  --color-light-green: #f2faf3;
+  --color-light-green-dark: #166534;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    @apply bg-neutral-50 text-neutral-800 antialiased overflow-x-hidden;
+  }
+}
+
+/* Custom Utilities for Premium Look */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glassmorphism-dark {
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Before After Compare Slider */
+.slider-handle::before,
+.slider-handle::after {
+  content: '';
+  position: absolute;
+  background: white;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 9999px;
+}
+
+.slider-handle::before {
+  bottom: 50%;
+  margin-bottom: 20px;
+}
+
+.slider-handle::after {
+  top: 50%;
+  margin-top: 20px;
+}
+
+/* Hide scrollbar for custom sliders */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
