@@ -100,7 +100,7 @@ const MainLayout: React.FC = () => {
 
   if (isAdminRoute) {
     return (
-      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 font-sans">
+      <div className="min-h-screen bg-neutral-100 font-sans">
         {isAdminLoggedIn ? (
           <AdminDashboard
             onLogout={handleLogout}
@@ -118,7 +118,7 @@ const MainLayout: React.FC = () => {
 
   // Public Landing Page
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200 antialiased font-sans">
+    <div className="min-h-screen bg-neutral-50 text-neutral-800 antialiased font-sans">
       <Navbar onAdminToggle={() => navigateTo('#admin')} />
       <Hero />
       <About />
