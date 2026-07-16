@@ -20,35 +20,24 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 
 const MainLayout: React.FC = () => {
   const { state } = useCMS();
-  
-  // Track URL path & hash for routing
-  const [currentPath, setCurrentPath] = useState(() => {
-    return window.location.pathname + window.location.hash;
-  });
-  
+
+  // Hash-based routing — works on GitHub Pages static hosting
+  const [currentHash, setCurrentHash] = useState(() => window.location.hash);
+
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
     return sessionStorage.getItem('aura_admin_session') === 'true';
   });
 
   useEffect(() => {
-    const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname + window.location.hash);
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash);
     };
-    
-    // Listen to browser navigation events
-    window.addEventListener('popstate', handleLocationChange);
-    window.addEventListener('hashchange', handleLocationChange);
-    
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-      window.removeEventListener('hashchange', handleLocationChange);
-    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (path: string) => {
-    window.history.pushState({}, '', path);
-    // Dispatch popstate event to let app know the URL changed
-    window.dispatchEvent(new PopStateEvent('popstate'));
+  const navigateTo = (hash: string) => {
+    window.location.hash = hash;
   };
 
   const handleLoginSuccess = () => {
@@ -59,7 +48,7 @@ const MainLayout: React.FC = () => {
   const handleLogout = () => {
     setIsAdminLoggedIn(false);
     sessionStorage.removeItem('aura_admin_session');
-    navigateTo('/');
+    navigateTo('');
   };
 
   // Dynamic Theme Color Injection
@@ -70,10 +59,10 @@ const MainLayout: React.FC = () => {
       styleTag.id = 'cms-theme-styles';
       document.head.appendChild(styleTag);
     }
-    
+
     const accent = state.theme.accentColor;
-    const accentHover = accent + 'dd'; // Slight transparency for hover states
-    
+    const accentHover = accent + 'dd';
+
     styleTag.innerHTML = `
       :root {
         --color-primary: ${state.theme.primaryColor};
@@ -88,7 +77,7 @@ const MainLayout: React.FC = () => {
   // SEO Updates
   useEffect(() => {
     document.title = state.seo.metaTitle;
-    
+
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement('meta');
@@ -106,8 +95,8 @@ const MainLayout: React.FC = () => {
     metaKeywords.setAttribute('content', state.seo.metaKeywords);
   }, [state.seo]);
 
-  // Check if current route is the Admin CMS page
-  const isAdminRoute = currentPath.includes('/admin') || currentPath.includes('#admin');
+  // Hash-based admin route check — works on any static host
+  const isAdminRoute = currentHash === '#admin' || currentHash === '#/admin';
 
   if (isAdminRoute) {
     return (
@@ -115,22 +104,22 @@ const MainLayout: React.FC = () => {
         {isAdminLoggedIn ? (
           <AdminDashboard
             onLogout={handleLogout}
-            onClose={() => navigateTo('/')}
+            onClose={() => navigateTo('')}
           />
         ) : (
           <AdminLogin
             onLoginSuccess={handleLoginSuccess}
-            onCancel={() => navigateTo('/')}
+            onCancel={() => navigateTo('')}
           />
         )}
       </div>
     );
   }
 
-  // Otherwise, render Public Landing Page
+  // Public Landing Page
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-200 antialiased font-sans">
-      <Navbar onAdminToggle={() => navigateTo('/admin')} />
+      <Navbar onAdminToggle={() => navigateTo('#admin')} />
       <Hero />
       <About />
       <Services />
@@ -143,7 +132,7 @@ const MainLayout: React.FC = () => {
       <BookingForm />
       <Contact />
       <Footer />
-      
+
       {/* Floating Widget Actions */}
       <MobileActions />
       <BackToTop />
